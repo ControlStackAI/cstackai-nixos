@@ -20,6 +20,7 @@
     ../../modules/home/git-repos.nix
     ../../modules/home/ai-web.nix
     ../../modules/home/screenshots.nix
+    ../../modules/core/neovim.nix
   ];
 
   # Let Home Manager install/manage itself (useful for standalone HM on non-NixOS)
@@ -68,6 +69,20 @@
     # Desktop apps referenced by Hyprland config / session defaults
     vivaldi
     warp-terminal
+    (pkgs.writeShellScriptBin "warp-wayland" ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      # Prefer Wayland for Warp (winit)
+      export WINIT_UNIX_BACKEND=wayland
+
+      # Also help other toolkits if Warp spawns anything (harmless if unused)
+      export QT_QPA_PLATFORM=wayland
+      export GDK_BACKEND=wayland
+      export ELECTRON_OZONE_PLATFORM_HINT=wayland
+
+      exec warp-terminal "$@"
+    '')
     kdePackages.dolphin
 
     # Hyprland keybind dependencies
@@ -95,6 +110,15 @@
     zip # Archive tool
     unzip # Archive tool
   ];
+
+  # Override the desktop entry so launchers (wofi) use the wrapper
+  xdg.desktopEntries."dev.warp.Warp" = {
+    name = "Warp";
+    exec = "warp-wayland %U";
+    icon = "dev.warp.Warp";
+    terminal = false;
+    categories = ["System" "TerminalEmulator"];
+  };
 
   # Enable Hyprland config under Home Manager
   wayland.windowManager.hyprland.enable = true;

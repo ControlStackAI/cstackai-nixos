@@ -68,7 +68,6 @@
 
     # Desktop apps referenced by Hyprland config / session defaults
     vivaldi
-    warp-terminal
     (pkgs.writeShellScriptBin "warp-wayland" ''
       #!/usr/bin/env bash
       set -euo pipefail

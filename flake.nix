@@ -46,6 +46,7 @@
         inherit pkgs;
         modules = [
           sops-nix.homeManagerModules.sops
+          nvf.homeManagerModules.default
           ./home/matthew/home.nix
         ];
       };
@@ -54,6 +55,7 @@
         inherit pkgs;
         modules = [
           sops-nix.homeManagerModules.sops
+          nvf.homeManagerModules.default
           ./home/matthew-mangano/home.nix
         ];
       };

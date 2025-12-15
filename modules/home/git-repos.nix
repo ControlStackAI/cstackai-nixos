@@ -43,7 +43,11 @@
       if [ ! -d "$path/.git" ]; then
         mkdir -p "$(dirname "$path")"
         "$git" clone --origin origin --branch "$branch" "$url" "$path" \
-          || "$git" clone "$url" "$path"
+          || "$git" clone "$url" "$path" \
+          || {
+            echo "[git-repos] Warning: failed to clone $url into $path (check SSH keys/permissions)" >&2
+            continue
+          }
       fi
 
       if [ -d "$path/.git" ]; then

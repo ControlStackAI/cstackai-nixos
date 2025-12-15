@@ -1,2 +1,3 @@
 # DEPRECATED: use ./repos.nix instead
-import ./repos.nix
+{ homeDir, projectsDir ? "${homeDir}/GithubProjects" }:
+import ./repos.nix { inherit homeDir projectsDir; }

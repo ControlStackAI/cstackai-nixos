@@ -36,8 +36,29 @@
     ...
   }: let
     system = "x86_64-linux";
-    pkgs = import nixpkgs {inherit system;};
+    pkgs = import nixpkgs {
+      inherit system;
+      config.allowUnfree = true;
+    };
   in {
+    homeConfigurations = {
+      matthew = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [
+          sops-nix.homeManagerModules.sops
+          ./home/matthew/home.nix
+        ];
+      };
+
+      "matthew-mangano" = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [
+          sops-nix.homeManagerModules.sops
+          ./home/matthew-mangano/home.nix
+        ];
+      };
+    };
+
     nixosConfigurations.controlstackos = nixpkgs.lib.nixosSystem {
       system = system;
 

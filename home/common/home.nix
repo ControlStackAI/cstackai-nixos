@@ -428,6 +428,10 @@
     };
   };
 
+  # Home Manager writes this file via the xdg.mimeApps module. Force overwrite so a pre-existing
+  # mimeapps.list (often created by desktop environments or previous tooling) doesn't block activation.
+  xdg.dataFile."applications/mimeapps.list".force = true;
+
   # Standardize XDG user directories and ensure they exist
   xdg.userDirs = {
     enable = true;

@@ -84,7 +84,10 @@
           # Back up conflicting files instead of failing activation
           home-manager.backupFileExtension = "backup";
           # Make sops-nix options available to Home Manager
-          home-manager.sharedModules = [sops-nix.homeManagerModules.sops];
+          home-manager.sharedModules = [
+            sops-nix.homeManagerModules.sops
+            nvf.homeManagerModules.default
+          ];
           home-manager.users.matthew = import ./home/matthew.nix;
         }
       ];

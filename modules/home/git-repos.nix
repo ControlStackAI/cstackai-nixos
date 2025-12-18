@@ -26,7 +26,11 @@
     git=${pkgs.git}/bin/git
     ssh_bin=${pkgs.openssh}/bin/ssh
 
-    # Ensure git uses a known-good ssh binary even in minimal activation environments
+    # Ensure ssh is available even in minimal activation environments.
+    # (Git may call `ssh` directly if core.sshCommand/GIT_SSH_COMMAND is set.)
+    export PATH="$(dirname "$ssh_bin"):$PATH"
+
+    # Ensure git uses a known-good ssh binary when it relies on GIT_SSH.
     export GIT_SSH="$ssh_bin"
 
     echo '${reposJson}' | "$jq" -c '.[]' | while IFS= read -r repo; do
@@ -42,8 +46,8 @@
       # Clone if missing
       if [ ! -d "$path/.git" ]; then
         mkdir -p "$(dirname "$path")"
-        "$git" clone --origin origin --branch "$branch" "$url" "$path" \
-          || "$git" clone "$url" "$path" \
+        "$git" clone --origin origin --branch "$branch" "$url" "$path" >/dev/null 2>&1 \
+          || "$git" clone "$url" "$path" >/dev/null 2>&1 \
           || {
             echo "[git-repos] Warning: failed to clone $url into $path (check SSH keys/permissions)" >&2
             continue
@@ -62,7 +66,7 @@
         fi
 
         # Fetch and attempt to fast-forward
-        "$git" -C "$path" fetch --all --prune || true
+        "$git" -C "$path" fetch --all --prune >/dev/null 2>&1 || true
 
         current_branch=$("$git" -C "$path" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
         if [ "$current_branch" != "$branch" ] && [ -n "$branch" ]; then
@@ -74,7 +78,7 @@
         fi
 
         # Fast-forward if possible (ignore failures)
-        "$git" -C "$path" pull --ff-only 2>/dev/null || true
+        "$git" -C "$path" pull --ff-only >/dev/null 2>&1 || true
 
         # Ensure declared worktrees
         echo "$repo" | "$jq" -c '.worktrees[]?' | while IFS= read -r wt; do

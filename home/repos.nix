@@ -1,5 +1,7 @@
-{ homeDir, projectsDir ? "${homeDir}/GithubProjects" }:
-[
+{
+  homeDir,
+  projectsDir ? "${homeDir}/GithubProjects",
+}: [
   {
     name = "Analysis";
     path = "${projectsDir}/Analysis";

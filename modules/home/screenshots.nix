@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-
-let
+{pkgs, ...}: let
   screenshotRegion = pkgs.writeShellScriptBin "screenshot-region" ''
     #!/usr/bin/env bash
     set -euo pipefail
@@ -49,8 +47,7 @@ let
     wl-screenrec --audio -f "$file" &
     echo $! > "$state_file"
   '';
-in
-{
+in {
   home.packages = [
     screenshotRegion
     screenshotFull

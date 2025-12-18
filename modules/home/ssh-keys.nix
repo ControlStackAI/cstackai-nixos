@@ -1,10 +1,11 @@
-{ config, lib, ... }:
-
-let
+{
+  config,
+  lib,
+  ...
+}: let
   inherit (lib) mkOption types;
   homeDir = config.home.homeDirectory;
-in
-{
+in {
   options.my.sshKeys = {
     githubKey = mkOption {
       type = types.str;

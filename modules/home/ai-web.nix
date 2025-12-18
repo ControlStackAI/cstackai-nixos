@@ -17,7 +17,10 @@ with lib; let
   };
 
   aiWebWorkDir = "${aiWebPkg}/lib/node_modules/nymeria-ai-console";
-  aiWebSrc = if cfg.sourceDir != null then cfg.sourceDir else aiWebWorkDir;
+  aiWebSrc =
+    if cfg.sourceDir != null
+    then cfg.sourceDir
+    else aiWebWorkDir;
 in {
   options.services.ai-web = {
     enable = mkEnableOption "ControlStackAI Web Console";

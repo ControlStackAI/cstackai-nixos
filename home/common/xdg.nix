@@ -8,6 +8,15 @@
     categories = ["System" "TerminalEmulator"];
   };
 
+  # Add a dedicated launcher so MATLAB always starts under XWayland
+  xdg.desktopEntries."com.mathworks.MATLAB.XWayland" = {
+    name = "MATLAB (XWayland)";
+    exec = "matlab-xwayland %U";
+    icon = "matlab";
+    terminal = false;
+    categories = ["Development" "Science"];
+  };
+
   # Set Vivaldi as the default browser/handler for web links and HTML
   xdg.mimeApps = {
     enable = true;

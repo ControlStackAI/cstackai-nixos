@@ -96,7 +96,56 @@
     exec warp-terminal "$@"
   '';
 
-  all = fonts ++ cli ++ notifications ++ desktop ++ dev ++ k8s ++ [warpWayland];
+  matlabXwayland = pkgs.writeShellScriptBin "matlab-xwayland" ''
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Force X11/XWayland backends for MATLAB/Simulink under Hyprland.
+    # Your Hyprland session sets Wayland-preference env globally; this wrapper overrides it.
+    export QT_QPA_PLATFORM=xcb
+    export GDK_BACKEND=x11
+    export CLUTTER_BACKEND=x11
+
+    # Java/AWT hint for wlroots compositors / non-reparenting WMs
+    export _JAVA_AWT_WM_NONREPARENTING=1
+
+    # Prevent toolkits from auto-selecting Wayland
+    unset WAYLAND_DISPLAY
+
+    # Resolve the MATLAB binary.
+    # 1) User override via env var
+    MATLAB_CMD="''${MATLAB_CMD:-}"
+
+    # 2) Common /opt install locations (MathWorks default)
+    if [ -z "$MATLAB_CMD" ]; then
+      for c in \
+        /opt/MATLAB/R2025b/bin/matlab \
+        /opt/MATLAB/R2025a/bin/matlab \
+        /opt/MATLAB/R2024b/bin/matlab \
+        /opt/MATLAB/R2024a/bin/matlab
+      do
+        if [ -x "$c" ]; then
+          MATLAB_CMD="$c"
+          break
+        fi
+      done
+    fi
+
+    # 3) Fall back to PATH
+    if [ -z "$MATLAB_CMD" ] && command -v matlab >/dev/null 2>&1; then
+      MATLAB_CMD="matlab"
+    fi
+
+    if [ -z "$MATLAB_CMD" ]; then
+      echo "[matlab-xwayland] ERROR: MATLAB binary not found." >&2
+      echo "[matlab-xwayland] Set MATLAB_CMD=/opt/MATLAB/R2025b/bin/matlab (or adjust the wrapper)." >&2
+      exit 127
+    fi
+
+    exec "$MATLAB_CMD" "$@"
+  '';
+
+  all = fonts ++ cli ++ notifications ++ desktop ++ dev ++ k8s ++ [warpWayland matlabXwayland];
 in {
   # Ensure user-installed fonts are discoverable
   fonts.fontconfig.enable = true;

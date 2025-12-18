@@ -17,6 +17,10 @@
       "workspace 9 silent, xwayland:1, title:^(MATLAB).*$"
       "workspace 9 silent, xwayland:1, title:.*(Simulink).*"
 
+      # Default MATLAB/Simulink windows should be tiled.
+      # We only float true dialogs below.
+      "tile, xwayland:1, class:^(MATLAB|Matlab).*"
+
       # Reduce flicker / resize artifacts on heavy XWayland apps
       "noanim, xwayland:1, class:^(MATLAB|Matlab|Simulink).*"
       "noblur, xwayland:1, class:^(MATLAB|Matlab|Simulink).*"

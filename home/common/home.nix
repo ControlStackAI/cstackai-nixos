@@ -7,6 +7,8 @@
     ./xdg.nix
     ./secrets.nix
 
+    ./hm-compat.nix
+
     ./programs/zsh.nix
     ./programs/starship.nix
     ./programs/fzf.nix

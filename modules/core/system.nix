@@ -5,6 +5,10 @@
   ...
 }: {
   system.stateVersion = "25.11";
+
+  # Track the newest Nix available in the pinned nixpkgs.
+  nix.package = lib.mkDefault pkgs.nixVersions.latest;
+
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   # Default kernel: latest from nixpkgs.

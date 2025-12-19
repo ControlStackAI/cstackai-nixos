@@ -78,7 +78,6 @@
 
     # Terminals
     ghostty
-    warp-terminal
     kitty
 
     # Shell/dev workflow

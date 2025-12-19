@@ -145,6 +145,121 @@
     #!/usr/bin/env bash
     set -euo pipefail
 
+    usage() {
+      cat <<'USAGE'
+    Usage: matlab-xwayland [options] [--] [matlab args...]
+
+    Runs MATLAB under XWayland/X11 (forces X11 Qt backend) and selects a MATLAB
+    release installed under /opt/MATLAB.
+
+    Options:
+      --list                 List detected releases (e.g. R2024b, R2025b)
+      --release <RYYYYa|b>   Launch a specific release (e.g. --release R2025b)
+      --latest               Launch the newest detected release (default)
+      --cmd <path>           Launch a specific matlab binary (escape hatch)
+      -h, --help             Show this help
+
+    Notes:
+      - If you don't pass a UI mode flag, we default to -desktop so launching
+        from wofi reliably opens the GUI (no controlling TTY).
+      - To force non-GUI mode, pass -batch, -nodisplay, or -nodesktop.
+    USAGE
+    }
+
+    WANT_LIST=0
+    RELEASE=""
+    MATLAB_CMD="''${MATLAB_CMD:-}"
+    EXTRA_ARGS=()
+
+    while [ "$#" -gt 0 ]; do
+      case "$1" in
+        -h|--help)
+          usage
+          exit 0
+          ;;
+        --list)
+          WANT_LIST=1
+          shift
+          ;;
+        --latest)
+          RELEASE=""
+          shift
+          ;;
+        --release)
+          RELEASE="''${2-}"
+          if [ -z "$RELEASE" ]; then
+            echo "[matlab-xwayland] ERROR: --release requires a value (e.g. R2025b)" >&2
+            exit 2
+          fi
+          shift 2
+          ;;
+        --cmd)
+          MATLAB_CMD="''${2-}"
+          if [ -z "$MATLAB_CMD" ]; then
+            echo "[matlab-xwayland] ERROR: --cmd requires a path" >&2
+            exit 2
+          fi
+          shift 2
+          ;;
+        --)
+          shift
+          EXTRA_ARGS+=("$@")
+          break
+          ;;
+        *)
+          EXTRA_ARGS+=("$1")
+          shift
+          ;;
+      esac
+    done
+
+    # Detect installed releases under /opt/MATLAB
+    shopt -s nullglob
+    rel_dirs=(/opt/MATLAB/R[0-9][0-9][0-9][0-9][ab])
+    rels=()
+    for d in "''${rel_dirs[@]}"; do
+      rels+=("$(basename "$d")")
+    done
+
+    if [ "''${#rels[@]}" -gt 0 ]; then
+      IFS=$'\n' rels_sorted=($(printf '%s\n' "''${rels[@]}" | sort -u))
+      unset IFS
+    else
+      rels_sorted=()
+    fi
+
+    if [ "$WANT_LIST" -eq 1 ]; then
+      printf '%s\n' "''${rels_sorted[@]}"
+      exit 0
+    fi
+
+    # Choose which matlab binary to run
+    if [ -z "$MATLAB_CMD" ]; then
+      if [ -n "$RELEASE" ]; then
+        case "$RELEASE" in
+          R*) ;;
+          *) RELEASE="R$RELEASE" ;;
+        esac
+        cand="/opt/MATLAB/$RELEASE/bin/matlab"
+        if [ ! -x "$cand" ]; then
+          echo "[matlab-xwayland] ERROR: requested release not found: $RELEASE" >&2
+          echo "[matlab-xwayland] Available releases:" >&2
+          printf '  %s\n' "''${rels_sorted[@]}" >&2
+          exit 127
+        fi
+        MATLAB_CMD="$cand"
+      elif [ "''${#rels_sorted[@]}" -gt 0 ]; then
+        last_idx=$((''${#rels_sorted[@]} - 1))
+        RELEASE="''${rels_sorted[$last_idx]}"
+        MATLAB_CMD="/opt/MATLAB/$RELEASE/bin/matlab"
+      elif command -v matlab >/dev/null 2>&1; then
+        MATLAB_CMD="matlab"
+      else
+        echo "[matlab-xwayland] ERROR: no MATLAB releases found under /opt/MATLAB and matlab not in PATH" >&2
+        exit 127
+      fi
+    fi
+
     # Force X11/XWayland backends for MATLAB/Simulink under Hyprland.
     # Your Hyprland session sets Wayland-preference env globally; this wrapper overrides it.
     export QT_QPA_PLATFORM=xcb
@@ -157,40 +272,45 @@
     # Prevent toolkits from auto-selecting Wayland
     unset WAYLAND_DISPLAY
 
-    # Resolve the MATLAB binary.
-    # 1) User override via env var
-    MATLAB_CMD="''${MATLAB_CMD:-}"
-
-    # 2) Common /opt install locations (MathWorks default)
-    if [ -z "$MATLAB_CMD" ]; then
-      for c in \
-        /opt/MATLAB/R2025b/bin/matlab \
-        /opt/MATLAB/R2025a/bin/matlab \
-        /opt/MATLAB/R2024b/bin/matlab \
-        /opt/MATLAB/R2024a/bin/matlab
-      do
-        if [ -x "$c" ]; then
-          MATLAB_CMD="$c"
-          break
-        fi
-      done
+    # If no UI mode flag is provided, default to -desktop (needed for launcher execution).
+    has_mode=0
+    for a in "''${EXTRA_ARGS[@]}"; do
+      case "$a" in
+        -desktop|-nodesktop|-nodisplay|-batch)
+          has_mode=1
+          ;;
+      esac
+    done
+    if [ "$has_mode" -eq 0 ]; then
+      EXTRA_ARGS=(-desktop "''${EXTRA_ARGS[@]}")
     fi
 
-    # 3) Fall back to PATH
-    if [ -z "$MATLAB_CMD" ] && command -v matlab >/dev/null 2>&1; then
-      MATLAB_CMD="matlab"
-    fi
-
-    if [ -z "$MATLAB_CMD" ]; then
-      echo "[matlab-xwayland] ERROR: MATLAB binary not found." >&2
-      echo "[matlab-xwayland] Set MATLAB_CMD=/opt/MATLAB/R2025b/bin/matlab (or adjust the wrapper)." >&2
-      exit 127
-    fi
-
-    exec "$MATLAB_CMD" "$@"
+    exec "$MATLAB_CMD" "''${EXTRA_ARGS[@]}"
   '';
 
-  all = fonts ++ cli ++ notifications ++ desktop ++ dev ++ cloud ++ k8s ++ [warpWayland matlabXwayland];
+  matlabXwaylandPick = pkgs.writeShellScriptBin "matlab-xwayland-pick" ''
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    releases="$(matlab-xwayland --list)"
+    if [ -z "$releases" ]; then
+      echo "[matlab-xwayland-pick] ERROR: no MATLAB releases found under /opt/MATLAB" >&2
+      exit 1
+    fi
+
+    if ! command -v wofi >/dev/null 2>&1; then
+      echo "[matlab-xwayland-pick] ERROR: wofi not found in PATH" >&2
+      printf '%s\n' "$releases" >&2
+      exit 1
+    fi
+
+    choice="$(printf '%s\n' "$releases" | wofi --dmenu --prompt 'MATLAB release')"
+    [ -z "$choice" ] && exit 0
+
+    exec matlab-xwayland --release "$choice" -desktop
+  '';
+
+  all = fonts ++ cli ++ notifications ++ desktop ++ dev ++ k8s ++ [warpWayland matlabXwayland matlabXwaylandPick];
 in {
   # Ensure user-installed fonts are discoverable
   fonts.fontconfig.enable = true;

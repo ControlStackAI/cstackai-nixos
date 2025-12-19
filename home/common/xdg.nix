@@ -9,9 +9,19 @@
   };
 
   # Add a dedicated launcher so MATLAB always starts under XWayland
+  # Note: we pass -desktop so launching from wofi reliably opens the GUI (no TTY).
   xdg.desktopEntries."com.mathworks.MATLAB.XWayland" = {
     name = "MATLAB (XWayland)";
-    exec = "matlab-xwayland %U";
+    exec = "matlab-xwayland -desktop %U";
+    icon = "matlab";
+    terminal = false;
+    categories = ["Development" "Science"];
+  };
+
+  # Picker entry: choose which /opt/MATLAB release to launch
+  xdg.desktopEntries."com.mathworks.MATLAB.XWayland.Pick" = {
+    name = "MATLAB (XWayland) — Pick Version";
+    exec = "matlab-xwayland-pick";
     icon = "matlab";
     terminal = false;
     categories = ["Development" "Science"];

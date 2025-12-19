@@ -47,6 +47,7 @@
     # Desktop apps referenced by Hyprland config / session defaults
     vivaldi
     kdePackages.dolphin
+    slack
 
     # Hyprland keybind dependencies
     brightnessctl
@@ -69,6 +70,12 @@
     gh # GitHub CLI
     delta # Git diff pager
     ghostty # Terminal emulator
+  ];
+
+  cloud = with pkgs; [
+    awscli2
+    google-cloud-sdk
+    azure-cli
   ];
 
   k8s = with pkgs; [
@@ -145,7 +152,7 @@
     exec "$MATLAB_CMD" "$@"
   '';
 
-  all = fonts ++ cli ++ notifications ++ desktop ++ dev ++ k8s ++ [warpWayland matlabXwayland];
+  all = fonts ++ cli ++ notifications ++ desktop ++ dev ++ cloud ++ k8s ++ [warpWayland matlabXwayland];
 in {
   # Ensure user-installed fonts are discoverable
   fonts.fontconfig.enable = true;

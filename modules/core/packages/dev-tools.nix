@@ -24,9 +24,6 @@
     virt-manager
     # Container tooling
     docker
-    # Cloud CLI tools
-    google-cloud-sdk
-    awscli2
     # Python development environment
     python312
     python312Packages.pip

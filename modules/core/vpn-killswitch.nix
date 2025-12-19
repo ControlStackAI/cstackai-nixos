@@ -8,7 +8,7 @@ with lib; let
   cfg = config.my.vpnKillSwitch;
 
   # Always include loopback; add common VPN interface guesses by default
-  defaultIfaces = ["moz0" "wgcf" "warp0" "tun0"];
+  defaultIfaces = ["wgcf" "warp0" "tun0"];
   allowedIfaces = lib.unique (["lo"] ++ cfg.allowInterfaces);
   ifaceSet = lib.concatStringsSep ", " (map (i: "\"${i}\"") allowedIfaces);
   allowedIfacesStr = lib.concatStringsSep ", " allowedIfaces;
@@ -29,8 +29,7 @@ with lib; let
     - status   Show whether the runtime kill switch table exists
 
     Notes:
-    - Enable AFTER your VPN is connected (e.g. mozillavpn activate or warp-on),
-      otherwise initial handshakes may be blocked.
+    - Enable AFTER your VPN is connected (e.g. warp-on), otherwise initial handshakes may be blocked.
     - This runtime switch is ephemeral; it will be cleared on reboot.
     USAGE
         }
@@ -94,11 +93,10 @@ in {
       default = defaultIfaces;
       description = ''
         Interface names allowed for egress when the kill switch is active.
-        Include your VPN interfaces here. Defaults include moz0 (Mozilla VPN)
-        and common WireGuard tunnel names (wgcf, warp0, tun0). Loopback (lo)
-        is always allowed implicitly.
+        Include your VPN interfaces here. Defaults include common WireGuard tunnel names
+        (wgcf, warp0, tun0). Loopback (lo) is always allowed implicitly.
       '';
-      example = ["moz0" "wgcf"];
+      example = ["wgcf" "warp0"];
     };
   };
 

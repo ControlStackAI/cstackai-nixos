@@ -21,15 +21,19 @@
 
     # Additional useful tools
     htop # Process monitor
+    btop # Process monitor (TUI)
     tree # Directory tree viewer
     wget # File downloader
     curl # HTTP client
     jq # JSON processor
 
     # System utilities
-    neofetch # System info
+    fastfetch # System info (fast)
     zip # Archive tool
     unzip # Archive tool
+
+    # Nix + direnv integration
+    nix-direnv
   ];
 
   notifications = with pkgs; [
@@ -46,6 +50,8 @@
 
     # Desktop apps referenced by Hyprland config / session defaults
     vivaldi
+    vivaldi-ffmpeg-codecs
+    widevine-cdm
     kdePackages.dolphin
     slack
 
@@ -69,7 +75,32 @@
     git # Version control
     gh # GitHub CLI
     delta # Git diff pager
-    ghostty # Terminal emulator
+
+    # Terminals
+    ghostty
+    warp-terminal
+    kitty
+
+    # Shell/dev workflow
+    tmux
+    zellij
+    just
+    yazi
+
+    # Language/tooling
+    nodejs
+    python312
+    python312Packages.pip
+    python312Packages.virtualenv
+    python312Packages.setuptools
+
+    luarocks
+    lua-language-server
+
+    nodePackages.prettier
+    nodePackages.eslint_d
+
+    yq-go
   ];
 
   cloud = with pkgs; [
@@ -86,6 +117,13 @@
     kubectx
     kustomize
     stern
+
+    # K8s/platform ops tooling
+    argocd
+    flux
+    cilium-cli
+    kubelogin-oidc
+    talosctl
   ];
 
   warpWayland = pkgs.writeShellScriptBin "warp-wayland" ''

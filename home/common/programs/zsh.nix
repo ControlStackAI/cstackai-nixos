@@ -6,6 +6,14 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
+    # Warp's zsh integration may reference $INSIDE_EMACS in title/prompt hooks.
+    # When zsh's UNSET behavior is enabled, referencing an unset variable throws
+    # "parameter not set" errors. This guard preserves INSIDE_EMACS when defined
+    # (e.g. inside Emacs) and otherwise defaults it to empty.
+    envExtra = ''
+      export INSIDE_EMACS=''${INSIDE_EMACS-}
+    '';
+
     # Shell aliases for better experience
     shellAliases = {
       ll = "eza -la --icons";

@@ -12,6 +12,6 @@
 
     # Deskflow can be added here once it is packaged or overlaid in nixpkgs,
     # e.g. via an overlay similar to the warp-terminal one.
-    # deskflow
+    deskflow
   ];
 }

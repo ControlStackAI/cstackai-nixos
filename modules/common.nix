@@ -18,6 +18,9 @@
     ./core/git-repo-manager.nix
     ./core/screenshots.nix
     ./core/ai-tools.nix
+
+    # NixOS-only desktop tools (Warp, Deskflow, etc.)
+    ./core/desktop-tools.nix
   ];
 
   # Override warp-terminal to a specific upstream build.

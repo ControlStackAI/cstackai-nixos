@@ -30,6 +30,17 @@
               content = {
                 type = "filesystem";
                 format = "bcachefs";
+                # bcachefs format-time options for single-device laptop root:
+                # - compression=lz4 for fast foreground IO
+                # - background_compression=zstd:3 for better long-term space savings
+                # - metadata_replicas=2 to improve metadata robustness
+                # - data_replicas=1 (no extra replicas on a single device)
+                extraArgs = [
+                  "--compression=lz4"
+                  "--background_compression=zstd:3"
+                  "--metadata_replicas=2"
+                  "--data_replicas=1"
+                ];
                 mountpoint = "/";
               };
             };

@@ -19,7 +19,7 @@
       hack-font # Warp's default font
       jetbrains-mono # Another excellent terminal font
       cascadia-code # Microsoft's terminal font
-      ubuntu-classic # Ubuntu fonts
+      ubuntu-classic # Linux fonts
       dejavu_fonts # DejaVu fonts
 
       # Fallback fonts

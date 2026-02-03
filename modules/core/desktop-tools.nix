@@ -4,7 +4,7 @@
   ...
 }: {
   # NixOS-only desktop GUI/dev tools.
-  # These are installed system-wide so Ubuntu + standalone Home Manager
+  # These are installed system-wide so Linux + standalone Home Manager
   # stay clean and only see the shared `home/common` layer.
   environment.systemPackages = with pkgs; [
     # Warp terminal (version pinned via the overlay in modules/common.nix)

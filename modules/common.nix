@@ -18,6 +18,9 @@
     ./core/git-repo-manager.nix
     ./core/screenshots.nix
     ./core/ai-tools.nix
+
+    # NixOS-only desktop tools (Warp, Deskflow, etc.)
+    ./core/desktop-tools.nix
   ];
 
   # Override warp-terminal to a specific upstream build.
@@ -27,12 +30,10 @@
   nixpkgs.overlays = [
     (final: prev: {
       warp-terminal = prev.warp-terminal.overrideAttrs (old: {
-        version = "0.2025.12.03.08.12.stable_02";
-
-        # Match nixpkgs' packaging, but pin to this newer upstream version.
+        version = "0.2025.12.17.17.17.stable_02";
         src = prev.fetchurl {
-          url = "https://releases.warp.dev/stable/v0.2025.12.03.08.12.stable_02/warp-terminal-v0.2025.12.03.08.12.stable_02-1-x86_64.pkg.tar.zst";
-          hash = "sha256-EkZ5ZDqKq6TO8yX5To+K4P50JvOa5LiT3pFa/UhhhWs=";
+          url = "https://releases.warp.dev/stable/v0.2025.12.17.17.17.stable_02/warp-terminal-v0.2025.12.17.17.17.stable_02-1-x86_64.pkg.tar.zst";
+          hash = "sha256-VGNIXVhrVu9Kqtg09E9MPPjvX87tNT6E7Ls6/+JkhO0=";
         };
       });
     })

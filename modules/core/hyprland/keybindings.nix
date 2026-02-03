@@ -9,7 +9,7 @@
     bind = [
       # Launch Applications
       "$mainMod, return, exec, $terminal"
-      "$mainMod, W, exec, warp-terminal"
+      "$mainMod, W, exec, warp-wayland"
       "$mainMod, C, killactive"
       "$mainMod, M, exit"
       "$mainMod, E, exec, $fileManager"

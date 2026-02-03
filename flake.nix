@@ -36,8 +36,31 @@
     ...
   }: let
     system = "x86_64-linux";
-    pkgs = import nixpkgs {inherit system;};
+    pkgs = import nixpkgs {
+      inherit system;
+      config.allowUnfree = true;
+    };
   in {
+    homeConfigurations = {
+      matthew = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [
+          sops-nix.homeManagerModules.sops
+          nvf.homeManagerModules.default
+          ./home/matthew/home.nix
+        ];
+      };
+
+      "matthew-mangano" = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [
+          sops-nix.homeManagerModules.sops
+          nvf.homeManagerModules.default
+          ./home/matthew-mangano/home.nix
+        ];
+      };
+    };
+
     nixosConfigurations.controlstackos = nixpkgs.lib.nixosSystem {
       system = system;
 
@@ -61,7 +84,10 @@
           # Back up conflicting files instead of failing activation
           home-manager.backupFileExtension = "backup";
           # Make sops-nix options available to Home Manager
-          home-manager.sharedModules = [sops-nix.homeManagerModules.sops];
+          home-manager.sharedModules = [
+            sops-nix.homeManagerModules.sops
+            nvf.homeManagerModules.default
+          ];
           home-manager.users.matthew = import ./home/matthew.nix;
         }
       ];

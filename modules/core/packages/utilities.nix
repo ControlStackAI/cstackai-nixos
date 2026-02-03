@@ -3,24 +3,7 @@
   pkgs,
   ...
 }: {
-  environment.systemPackages = with pkgs; [
-    btop
-    tree
-    fastfetch
-    starship
-    ghostty
-    warp-terminal
-    vivaldi
-    vivaldi-ffmpeg-codecs
-    widevine-cdm
-
-    # Polkit agent (for authentication prompts in Wayland/Hyprland)
-    lxqt.lxqt-policykit
-
-    # Wayland-native screenshot and screen recording
-    grim
-    slurp
-    swappy
-    wl-screenrec
-  ];
+  # Intentionally empty: user-facing tools/apps are managed via Home Manager
+  # for parity between NixOS and Linux + Home Manager.
+  environment.systemPackages = with pkgs; [];
 }

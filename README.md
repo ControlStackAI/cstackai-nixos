@@ -1,8 +1,8 @@
-# NixOS • nymeria
+# NixOS • controlstackos
 
 [![nix](https://github.com/ManganoConsulting/nixos-nymeria/actions/workflows/nix.yml/badge.svg)](https://github.com/ManganoConsulting/nixos-nymeria/actions/workflows/nix.yml)
 
-A golden flake for my laptop host "nymeria" with:
+A golden flake for my laptop host "controlstackos" (HP Firefly 16 G11, 1TB NVMe, 32GB RAM) with:
 
 - Home Manager wired as a NixOS module
 - sops-nix for secrets (AGE)
@@ -16,7 +16,7 @@ A golden flake for my laptop host "nymeria" with:
 
 ## Status / Roadmap
 
-**Goal:** A golden NixOS flake for the _nymeria_ laptop that works identically on hardware and QEMU VMs, with declarative disk layout (disko), sops-nix secrets, Home Manager user environment, and a near-automatic install/upgrade flow.
+**Goal:** A golden NixOS flake for the _controlstackos_ laptop (HP Firefly 16 G11) that works identically on hardware and QEMU VMs, with declarative disk layout (disko), sops-nix secrets, Home Manager user environment, and a near-automatic install/upgrade flow.
 
 **Completed**
 - [x] Flake structure with hardware + VM configs
@@ -131,7 +131,7 @@ nix build .#packages.x86_64-linux.pre-commit-check
 ## Repo layout
 
 - `flake.nix`        — inputs, outputs, host defs, dev shell, checks
-- `hosts/nymeria/`   — host config and hardware details
+- `hosts/controlstackos/`   — host config and hardware details
 - `modules/`         — shared NixOS modules (core, desktop, vm-guest)
 - `home/`            — Home Manager config for the user
 - `docs/REFRESH.md`  — rebuild, install, and VM notes

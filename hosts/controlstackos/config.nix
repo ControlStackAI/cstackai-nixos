@@ -11,6 +11,11 @@
     ../../modules/core/cloudflare-warp.nix
   ];
 
+  # Enable booting from a bcachefs root filesystem on this host.
+  # The actual partitioning and filesystem creation is handled by
+  # hosts/controlstackos/disko.nix.
+  boot.supportedFilesystems = ["bcachefs"];
+
   # Per-host kernel customization examples (override core/system.nix defaults):
   #
   # Choose kernel series:

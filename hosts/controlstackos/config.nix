@@ -16,26 +16,8 @@
   # hosts/controlstackos/disko.nix.
   boot.supportedFilesystems = ["bcachefs"];
 
-  # Mount bcachefs subvolumes for a clean layout and targeted snapshots.
+  # Root filesystem is a single bcachefs volume; no subvolume mounts.
   # The root device/fsType come from hardware-configuration.nix.
-  fileSystems."/home" = {
-    device = config.fileSystems."/".device;
-    fsType = "bcachefs";
-    options = ["X-mount.subdir=@home" "noatime"];
-  };
-
-  fileSystems."/nix" = {
-    device = config.fileSystems."/".device;
-    fsType = "bcachefs";
-    options = ["X-mount.subdir=@nix" "noatime"];
-  };
-
-  fileSystems."/var/log" = {
-    device = config.fileSystems."/".device;
-    fsType = "bcachefs";
-    options = ["X-mount.subdir=@log" "noatime"];
-  };
-
   # Per-host kernel customization examples (override core/system.nix defaults):
   #
   # Choose kernel series:

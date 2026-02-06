@@ -10,8 +10,8 @@ nix flake update
 # Format Nix files
 nix fmt .
 
-# Build + switch to nymeria configuration
-sudo nixos-rebuild switch --flake .#nymeria
+# Build + switch to controlstackos configuration
+sudo nixos-rebuild switch --flake .#controlstackos
 ```
 
 ## New machine install (manual partition)
@@ -21,21 +21,27 @@ sudo nixos-rebuild switch --flake .#nymeria
    git clone git@github.com:ManganoConsulting/nixos-nymeria.git
    cd nixos-nymeria
    ```
-3. Generate hardware config and copy it into hosts/nymeria:
+3. Generate hardware config and copy it into hosts/controlstackos:
    ```bash
-   sudo nixos-generate-config --show-hardware-config > hosts/nymeria/hardware-configuration.nix
+   sudo nixos-generate-config --show-hardware-config > hosts/controlstackos/hardware-configuration.nix
    ```
 4. Install:
    ```bash
-   sudo nixos-install --flake .#nymeria
+   sudo nixos-install --flake .#controlstackos
    ```
 5. Reboot.
 
-## Declarative partition (optional, disko)
+## Declarative partition (bcachefs root with disko on Firefly)
 ```bash
-# Review and edit hosts/nymeria/disko.nix to match your disk(s) first
-nix run github:nix-community/disko -- --mode disko ./hosts/nymeria/disko.nix
-sudo nixos-install --flake .#nymeria
+# Review and edit hosts/controlstackos/disko.nix to match your disk(s) first
+# (for the HP Firefly 16 G11 with a single 1TB NVMe, /dev/nvme0n1 is expected)
+nix run github:nix-community/disko -- --mode disko ./hosts/controlstackos/disko.nix
+
+# After disko finishes, generate hardware config for the Firefly:
+sudo nixos-generate-config --show-hardware-config > hosts/controlstackos/hardware-configuration.nix
+
+# Then install using the controlstackos host configuration (bcachefs root)
+sudo nixos-install --flake .#controlstackos
 ```
 
 ## VM smoke test

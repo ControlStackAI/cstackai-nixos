@@ -115,6 +115,32 @@
       ];
     };
 
+    # Bcachefs-aware installer ISO for controlstackos (HP Firefly)
+    nixosConfigurations.controlstackos-installer = nixpkgs.lib.nixosSystem {
+      system = system;
+      modules = [
+        # Minimal installer image with a recent kernel, without ZFS.
+        "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal-new-kernel-no-zfs.nix"
+        (
+          { lib, pkgs, ... }:
+            {
+              nix.settings.experimental-features = ["nix-command" "flakes"];
+
+              # Tools we want on the installer for this workflow.
+              environment.systemPackages = with pkgs; [
+                git
+                disko
+                bcachefs-tools
+                keyutils
+              ];
+
+              # Ensure the installer kernel/initrd support bcachefs.
+              boot.supportedFilesystems = ["bcachefs"];
+            }
+        )
+      ];
+    };
+
     # per-system outputs
     devShells.${system}.default = pkgs.mkShell {
       buildInputs = with pkgs; [

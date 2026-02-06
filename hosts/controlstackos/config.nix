@@ -16,15 +16,8 @@
   # hosts/controlstackos/disko.nix.
   boot.supportedFilesystems = ["bcachefs"];
 
-  # Use systemd in the initrd so that X-mount.subdir for bcachefs root works
-  # reliably, and pass rootflags to mount the @ subvolume as /.
-  boot.initrd.systemd.enable = true;
-  boot.kernelParams = lib.mkAfter ["rootflags=X-mount.subdir=@"];
-
   # Mount bcachefs subvolumes for a clean layout and targeted snapshots.
   # The root device/fsType come from hardware-configuration.nix.
-  fileSystems."/".options = ["X-mount.subdir=@" "noatime"];
-
   fileSystems."/home" = {
     device = config.fileSystems."/".device;
     fsType = "bcachefs";

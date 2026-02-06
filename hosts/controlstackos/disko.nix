@@ -14,7 +14,7 @@
           partitions = {
             ESP = {
               name = "ESP";
-              size = "512MiB";
+              size = "512M";
               type = "ef00"; # EFI System Partition
               content = {
                 type = "filesystem";
@@ -26,7 +26,8 @@
 
             root = {
               name = "root";
-              size = "100%";
+              # Use the remainder of the disk for root by setting the end to "-0".
+              end = "-0";
               content = {
                 type = "filesystem";
                 format = "bcachefs";

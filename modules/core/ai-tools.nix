@@ -36,6 +36,37 @@
         cp -r agents $out/bin/
         chmod +x $out/bin/*
         chmod +x $out/bin/agents/*
+
+        # Convenience wrappers for code-focused CLIs
+        # openclaw / claude-code → Claude backend
+        cat > $out/bin/openclaw <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+exec ai claude "$@"
+EOF
+        chmod +x $out/bin/openclaw
+
+        cat > $out/bin/claude-code <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+exec ai claude "$@"
+EOF
+        chmod +x $out/bin/claude-code
+
+        # opencode / openai-codex → OpenAI backend
+        cat > $out/bin/opencode <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+exec ai openai "$@"
+EOF
+        chmod +x $out/bin/opencode
+
+        cat > $out/bin/openai-codex <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+exec ai openai "$@"
+EOF
+        chmod +x $out/bin/openai-codex
       '';
     })
   ];

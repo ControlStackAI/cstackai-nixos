@@ -11,11 +11,9 @@
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
-  # Default kernel: latest from nixpkgs.
-  # Hosts can override this by setting `boot.kernelPackages` in their own config,
-  # e.g. in hosts/controlstackos/config.nix:
-  #   boot.kernelPackages = pkgs.linuxPackages_lts;
-  boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
+  # Hosts may override kernelPackages in their own config if needed,
+  # but we leave the global default to NixOS's built-in choice to avoid
+  # duplicate definitions with hardware-specific modules.
 
   # Enable modern graphics stack on 25.05+
   hardware.graphics.enable = true;
